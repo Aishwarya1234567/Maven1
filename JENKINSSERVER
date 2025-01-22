@@ -1,0 +1,47 @@
+pipeline
+{
+    agent any
+    stages
+    {
+        stage('continuous download')
+        {
+            steps
+            {
+              git 'https://github.com/Aishwarya1234567/Maven1.git'
+            }
+}
+      stage('continuous build')
+      {
+          steps
+          {
+              sh 'mvn package'
+          }
+}
+stage('continuous deployment')
+{
+    steps
+    {
+        deploy adapters: [tomcat9(credentialsId: '6ff8335c-04d3-4fe9-a5c8-80666617e0dc', path: '', url: 'http://172.31.93.101:8080')], contextPath: 'test', war: '**/*.war'
+    }
+   
+}
+stage('continuous testing')
+{
+    steps
+    {
+        git 'https://github.com/Shrinivasc/testing.git'
+       sh 'java -jar /home/ubuntu/.jenkins/workspace/declarativepipeline/testing.jar'
+        
+    }
+  
+}
+stage('continuous delivery') 
+{
+    steps
+    {
+        deploy adapters: [tomcat9(credentialsId: 'e600a153-09ba-4270-95fc-96029148ff75', path: '', url: 'http://172.31.83.16:8080')], contextPath: 'prod', war: '**/*.war'
+    }
+   
+}
+    }
+}
